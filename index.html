@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Simulateur SIG - Espace Gestion Premium</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f7f9fb;
+      color: #2e3a59;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background-color: #1a1f36;
+      color: white;
+      padding: 20px;
+      text-align: center;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 40px auto;
+      background-color: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    }
+
+    h2, h3 {
+      text-align: center;
+      color: #1a1f36;
+    }
+
+    input[type='number'] {
+      width: 120px;
+      margin: 3px;
+      padding: 5px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin-top: 20px;
+    }
+
+    th, td {
+      border: 1px solid #e0e0e0;
+      padding: 10px;
+      text-align: right;
+    }
+
+    th {
+      background-color: #f0f2f7;
+      font-weight: 600;
+    }
+
+    .label {
+      text-align: left;
+      font-weight: 500;
+    }
+
+    button {
+      display: block;
+      margin: 30px auto;
+      padding: 12px 25px;
+      font-size: 16px;
+      background-color: #0061f2;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #004cc1;
+    }
+
+    #commentaires {
+      margin-top: 40px;
+      padding: 20px;
+      background-color: #eef3fa;
+      border-left: 6px solid #0061f2;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Simulateur des Soldes Intermédiaires de Gestion</h1>
+  </header>
+
+  <div class="container">
+    <h2>Saisie des données</h2>
+    <p>Indiquez les montants en euros (€) :</p>
+    <table>
+      <thead>
+        <tr>
+          <th class="label">Poste</th>
+          <th>Montant (€)</th>
+        </tr>
+      </thead>
+      <tbody id="inputs">
+        <!-- Zone de saisie dynamique (inchangée ici) -->
+      </tbody>
+    </table>
+
+    <button onclick="calculSIG()">Calculer les SIG</button>
+
+    <h3>Résultats</h3>
+    <table id="resultats">
+      <thead><tr><th class="label">Solde</th><th>Montant (€)</th><th>% du CA</th></tr></thead>
+      <tbody></tbody>
+    </table>
+
+    <div id="commentaires"></div>
+  </div>
+
+  <script>
+    function val(id) {
+      return parseFloat(document.getElementById(id).value) || 0;
+    }
+
+    function calculSIG() {
+      const ca = val("ca");
+      const prod = ca + val("prod_stock") + val("prod_immob");
+      const achats = val("achats");
+      const externes = val("externes");
+      const impots = val("impots");
+      const personnel = val("personnel");
+      const dotations = val("dotations");
+      const subv = val("subv");
+      const reprises = val("reprises");
+      const autres_prod = val("autres_prod");
+      const charges_fin = val("financieres");
+      const produits_fin = val("prod_fin");
+      const excep_prod = val("excep_prod");
+      const excep_charges = val("excep_charges");
+      const participation = val("participation");
+      const impot_soc = val("impot_soc");
+
+      const VA = prod - achats - externes;
+      const EBE = VA + subv + reprises + autres_prod - impots - personnel;
+      const RE = EBE - dotations;
+      const RCAI = RE + produits_fin - charges_fin;
+      const REX = excep_prod - excep_charges;
+      const RESULTAT_NET = RCAI + REX - participation - impot_soc;
+
+      const sigs = [
+        ["Production de l'exercice", prod],
+        ["Valeur ajoutée (VA)", VA],
+        ["Excédent brut d'exploitation (EBE)", EBE],
+        ["Résultat d'exploitation (RE)", RE],
+        ["RCAI", RCAI],
+        ["Résultat exceptionnel", REX],
+        ["Résultat net comptable", RESULTAT_NET]
+      ];
+
+      const body = document.querySelector("#resultats tbody");
+      body.innerHTML = "";
+      sigs.forEach(([label, val]) => {
+        const row = document.createElement("tr");
+        row.innerHTML = `<td class='label'>${label}</td><td>${val.toFixed(2)}</td><td>${((val / ca) * 100).toFixed(1)}%</td>`;
+        body.appendChild(row);
+      });
+
+      const commentaires = [];
+      if (EBE < 0) {
+        commentaires.push("\u274C L'EBE est négatif : l'activité n'est pas rentable, même avant amortissements et frais financiers.");
+      } else if (EBE / ca < 0.05) {
+        commentaires.push("\u26A0\uFE0F EBE faible : la marge opérationnelle est inférieure à 5 % du CA.");
+      } else {
+        commentaires.push("\u2705 EBE satisfaisant : l'entreprise dégage une capacité d'autofinancement convenable.");
+      }
+
+      if (RE < 0) {
+        commentaires.push("\u274C Résultat d'exploitation négatif : les dotations aux amortissements pèsent trop lourd.");
+      }
+
+      if (RCAI < 0) {
+        commentaires.push("\u26A0\uFE0F RCAI négatif : l'endettement financier est trop important ou mal maîtrisé.");
+      }
+
+      if (RESULTAT_NET < 0) {
+        commentaires.push("\u274C Résultat net déficitaire : l'entreprise termine l'exercice en perte.");
+      } else {
+        commentaires.push("\u2705 Résultat net positif : l'entreprise est bénéficiaire.");
+      }
+
+      document.getElementById("commentaires").innerHTML = "<h3>Commentaires</h3><ul><li>" + commentaires.join("</li><li>") + "</li></ul>";
+    }
+
+    calculSIG();
+  </script>
+</body>
+</html>
