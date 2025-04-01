@@ -2,8 +2,7 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Simulateur SIG - Espace Gestion Premium</title>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <title>Simulateur SIG - Analyse Triannuelle Complète</title>
   <style>
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -12,82 +11,56 @@
       margin: 0;
       padding: 0;
     }
-
     header {
       background-color: #1a1f36;
       color: white;
       padding: 20px;
       text-align: center;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     }
-
     .container {
-      max-width: 1000px;
+      max-width: 1200px;
       margin: 40px auto;
       background-color: white;
       padding: 30px;
       border-radius: 12px;
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
     }
-
-    h2, h3 {
-      text-align: center;
-      color: #1a1f36;
-    }
-
-    input[type='number'] {
-      width: 120px;
-      margin: 3px;
-      padding: 5px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-    }
-
     table {
       border-collapse: collapse;
       width: 100%;
       margin-top: 20px;
     }
-
     th, td {
       border: 1px solid #e0e0e0;
-      padding: 10px;
+      padding: 8px;
       text-align: right;
     }
-
     th {
       background-color: #f0f2f7;
-      font-weight: 600;
     }
-
     .label {
       text-align: left;
-      font-weight: 500;
     }
-
+    .produit {
+      background-color: #e0f5e0;
+    }
+    .charge {
+      background-color: #ffe7cc;
+    }
+    input[type='number'] {
+      width: 100px;
+      padding: 4px;
+    }
     button {
       display: block;
       margin: 30px auto;
-      padding: 12px 25px;
+      padding: 10px 25px;
       font-size: 16px;
       background-color: #0061f2;
       color: white;
       border: none;
       border-radius: 8px;
       cursor: pointer;
-      transition: background-color 0.3s ease;
-    }
-
-    button:hover {
-      background-color: #004cc1;
-    }
-
-    #commentaires {
-      margin-top: 40px;
-      padding: 20px;
-      background-color: #eef3fa;
-      border-left: 6px solid #0061f2;
-      border-radius: 8px;
     }
   </style>
 </head>
@@ -95,125 +68,97 @@
   <header>
     <h1>Simulateur des Soldes Intermédiaires de Gestion</h1>
   </header>
-
   <div class="container">
-    <h2>Saisie des données</h2>
-    <p>Indiquez les montants en euros (€) :</p>
+    <h2>Saisie triannuelle (en €)</h2>
     <table>
       <thead>
-        <tr>
-          <th class="label">Poste</th>
-          <th>Montant (€)</th>
-        </tr>
+        <tr><th class="label">Postes</th><th>N-2</th><th>N-1</th><th>N</th></tr>
       </thead>
       <tbody id="inputs">
-  <tr><td class="label">Chiffre d'affaires HT</td><td><input type="number" id="ca" value="100000"></td></tr>
-  <tr><td class="label">Production stockée</td><td><input type="number" id="prod_stock" value="2000"></td></tr>
-  <tr><td class="label">Production immobilisée</td><td><input type="number" id="prod_immob" value="0"></td></tr>
-  <tr><td class="label">Subventions d'exploitation</td><td><input type="number" id="subv" value="0"></td></tr>
-  <tr><td class="label">Reprises & transferts de charges</td><td><input type="number" id="reprises" value="0"></td></tr>
-  <tr><td class="label">Autres produits d'exploitation</td><td><input type="number" id="autres_prod" value="0"></td></tr>
-  <tr><td class="label">Achats consommés (matières / marchandises)</td><td><input type="number" id="achats" value="30000"></td></tr>
-  <tr><td class="label">Autres charges externes</td><td><input type="number" id="externes" value="15000"></td></tr>
-  <tr><td class="label">Impôts, taxes et versements assimilés</td><td><input type="number" id="impots" value="3000"></td></tr>
-  <tr><td class="label">Charges de personnel</td><td><input type="number" id="personnel" value="25000"></td></tr>
-  <tr><td class="label">Dotations aux amortissements</td><td><input type="number" id="dotations" value="5000"></td></tr>
-  <tr><td class="label">Charges financières</td><td><input type="number" id="financieres" value="1000"></td></tr>
-  <tr><td class="label">Produits financiers</td><td><input type="number" id="prod_fin" value="500"></td></tr>
-  <tr><td class="label">Charges exceptionnelles</td><td><input type="number" id="excep_charges" value="300"></td></tr>
-  <tr><td class="label">Produits exceptionnels</td><td><input type="number" id="excep_prod" value="200"></td></tr>
-  <tr><td class="label">Participation des salariés</td><td><input type="number" id="participation" value="1000"></td></tr>
-  <tr><td class="label">Impôt sur les bénéfices</td><td><input type="number" id="impot_soc" value="2000"></td></tr>
+  <tr><td class="label produit">Chiffre d'affaires HT</td><td><input id="ca2" type="number"></td><td><input id="ca1" type="number"></td><td><input id="ca" type="number"></td></tr>
+  <tr><td class="label produit">Production stockée</td><td><input id="prod_stock2" type="number"></td><td><input id="prod_stock1" type="number"></td><td><input id="prod_stock" type="number"></td></tr>
+  <tr><td class="label produit">Production immobilisée</td><td><input id="prod_immob2" type="number"></td><td><input id="prod_immob1" type="number"></td><td><input id="prod_immob" type="number"></td></tr>
+  <tr><td class="label charge">Achats consommés</td><td><input id="achats2" type="number"></td><td><input id="achats1" type="number"></td><td><input id="achats" type="number"></td></tr>
+  <tr><td class="label charge">Charges externes</td><td><input id="externes2" type="number"></td><td><input id="externes1" type="number"></td><td><input id="externes" type="number"></td></tr>
+  <tr><td class="label charge">Impôts et taxes</td><td><input id="impots2" type="number"></td><td><input id="impots1" type="number"></td><td><input id="impots" type="number"></td></tr>
+  <tr><td class="label charge">Charges de personnel</td><td><input id="personnel2" type="number"></td><td><input id="personnel1" type="number"></td><td><input id="personnel" type="number"></td></tr>
+  <tr><td class="label charge">Dotations aux amortissements</td><td><input id="dotations2" type="number"></td><td><input id="dotations1" type="number"></td><td><input id="dotations" type="number"></td></tr>
+  <tr><td class="label charge">Charges financières</td><td><input id="financieres2" type="number"></td><td><input id="financieres1" type="number"></td><td><input id="financieres" type="number"></td></tr>
+  <tr><td class="label produit">Produits financiers</td><td><input id="prod_fin2" type="number"></td><td><input id="prod_fin1" type="number"></td><td><input id="prod_fin" type="number"></td></tr>
+  <tr><td class="label charge">Charges exceptionnelles</td><td><input id="excep_charges2" type="number"></td><td><input id="excep_charges1" type="number"></td><td><input id="excep_charges" type="number"></td></tr>
+  <tr><td class="label produit">Produits exceptionnels</td><td><input id="excep_prod2" type="number"></td><td><input id="excep_prod1" type="number"></td><td><input id="excep_prod" type="number"></td></tr>
+  <tr><td class="label charge">Participation des salariés</td><td><input id="participation2" type="number"></td><td><input id="participation1" type="number"></td><td><input id="participation" type="number"></td></tr>
+  <tr><td class="label charge">Impôt sur les bénéfices</td><td><input id="impot_soc2" type="number"></td><td><input id="impot_soc1" type="number"></td><td><input id="impot_soc" type="number"></td></tr>
 </tbody>
     </table>
-
     <button onclick="calculSIG()">Calculer les SIG</button>
 
-    <h3>Résultats</h3>
+    <h3>Tableau des SIG</h3>
     <table id="resultats">
-      <thead><tr><th class="label">Solde</th><th>Montant (€)</th><th>% du CA</th></tr></thead>
+      <thead>
+        <tr><th class="label">Solde</th><th>N-2</th><th>N-1</th><th>N</th><th>Évol. N-2 → N-1 (%)</th><th>Évol. N-1 → N (%)</th></tr>
+      </thead>
       <tbody></tbody>
     </table>
-
-    <div id="commentaires"></div>
   </div>
 
   <script>
-    function val(id) {
+    function getVal(id) {
       return parseFloat(document.getElementById(id).value) || 0;
     }
 
-    function calculSIG() {
-      const ca = val("ca");
-      const prod = ca + val("prod_stock") + val("prod_immob");
-      const achats = val("achats");
-      const externes = val("externes");
-      const impots = val("impots");
-      const personnel = val("personnel");
-      const dotations = val("dotations");
-      const subv = val("subv");
-      const reprises = val("reprises");
-      const autres_prod = val("autres_prod");
-      const charges_fin = val("financieres");
-      const produits_fin = val("prod_fin");
-      const excep_prod = val("excep_prod");
-      const excep_charges = val("excep_charges");
-      const participation = val("participation");
-      const impot_soc = val("impot_soc");
+    function calculAnnee(suffixe) {
+      const ca = getVal("ca" + suffixe);
+      const prod = ca + getVal("prod_stock" + suffixe) + getVal("prod_immob" + suffixe);
+      const achats = getVal("achats" + suffixe);
+      const externes = getVal("externes" + suffixe);
+      const impots = getVal("impots" + suffixe);
+      const personnel = getVal("personnel" + suffixe);
+      const dotations = getVal("dotations" + suffixe);
+      const financieres = getVal("financieres" + suffixe);
+      const prod_fin = getVal("prod_fin" + suffixe);
+      const excep_prod = getVal("excep_prod" + suffixe);
+      const excep_charges = getVal("excep_charges" + suffixe);
+      const participation = getVal("participation" + suffixe);
+      const impot_soc = getVal("impot_soc" + suffixe);
 
       const VA = prod - achats - externes;
-      const EBE = VA + subv + reprises + autres_prod - impots - personnel;
+      const EBE = VA - impots - personnel;
       const RE = EBE - dotations;
-      const RCAI = RE + produits_fin - charges_fin;
+      const RCAI = RE + prod_fin - financieres;
       const REX = excep_prod - excep_charges;
       const RESULTAT_NET = RCAI + REX - participation - impot_soc;
 
-      const sigs = [
-        ["Production de l'exercice", prod],
-        ["Valeur ajoutée (VA)", VA],
-        ["Excédent brut d'exploitation (EBE)", EBE],
-        ["Résultat d'exploitation (RE)", RE],
-        ["RCAI", RCAI],
-        ["Résultat exceptionnel", REX],
-        ["Résultat net comptable", RESULTAT_NET]
+      return [prod, VA, EBE, RE, RCAI, REX, RESULTAT_NET];
+    }
+
+    function calculSIG() {
+      const n2 = calculAnnee("2");
+      const n1 = calculAnnee("1");
+      const n = calculAnnee("");
+
+      const libelles = [
+        "Production de l'exercice",
+        "Valeur ajoutée (VA)",
+        "Excédent brut d'exploitation (EBE)",
+        "Résultat d'exploitation (RE)",
+        "RCAI",
+        "Résultat exceptionnel",
+        "Résultat net comptable"
       ];
 
       const body = document.querySelector("#resultats tbody");
       body.innerHTML = "";
-      sigs.forEach(([label, val]) => {
+
+      for (let i = 0; i < libelles.length; i++) {
+        const evol1 = n2[i] !== 0 ? ((n1[i] - n2[i]) / n2[i]) * 100 : 0;
+        const evol2 = n1[i] !== 0 ? ((n[i] - n1[i]) / n1[i]) * 100 : 0;
+
         const row = document.createElement("tr");
-        row.innerHTML = `<td class='label'>${label}</td><td>${val.toFixed(2)}</td><td>${((val / ca) * 100).toFixed(1)}%</td>`;
+        row.innerHTML = `<td class='label'>${libelles[i]}</td><td>${n2[i].toFixed(2)}</td><td>${n1[i].toFixed(2)}</td><td>${n[i].toFixed(2)}</td><td>${evol1.toFixed(1)}%</td><td>${evol2.toFixed(1)}%</td>`;
         body.appendChild(row);
-      });
-
-      const commentaires = [];
-      if (EBE < 0) {
-        commentaires.push("\u274C L'EBE est négatif : l'activité n'est pas rentable, même avant amortissements et frais financiers.");
-      } else if (EBE / ca < 0.05) {
-        commentaires.push("\u26A0\uFE0F EBE faible : la marge opérationnelle est inférieure à 5 % du CA.");
-      } else {
-        commentaires.push("\u2705 EBE satisfaisant : l'entreprise dégage une capacité d'autofinancement convenable.");
       }
-
-      if (RE < 0) {
-        commentaires.push("\u274C Résultat d'exploitation négatif : les dotations aux amortissements pèsent trop lourd.");
-      }
-
-      if (RCAI < 0) {
-        commentaires.push("\u26A0\uFE0F RCAI négatif : l'endettement financier est trop important ou mal maîtrisé.");
-      }
-
-      if (RESULTAT_NET < 0) {
-        commentaires.push("\u274C Résultat net déficitaire : l'entreprise termine l'exercice en perte.");
-      } else {
-        commentaires.push("\u2705 Résultat net positif : l'entreprise est bénéficiaire.");
-      }
-
-      document.getElementById("commentaires").innerHTML = "<h3>Commentaires</h3><ul><li>" + commentaires.join("</li><li>") + "</li></ul>";
     }
-
-    calculSIG();
   </script>
 </body>
 </html>
-
