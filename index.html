@@ -107,8 +107,24 @@
         </tr>
       </thead>
       <tbody id="inputs">
-        <!-- Zone de saisie dynamique (inchangée ici) -->
-      </tbody>
+  <tr><td class="label">Chiffre d'affaires HT</td><td><input type="number" id="ca" value="100000"></td></tr>
+  <tr><td class="label">Production stockée</td><td><input type="number" id="prod_stock" value="2000"></td></tr>
+  <tr><td class="label">Production immobilisée</td><td><input type="number" id="prod_immob" value="0"></td></tr>
+  <tr><td class="label">Subventions d'exploitation</td><td><input type="number" id="subv" value="0"></td></tr>
+  <tr><td class="label">Reprises & transferts de charges</td><td><input type="number" id="reprises" value="0"></td></tr>
+  <tr><td class="label">Autres produits d'exploitation</td><td><input type="number" id="autres_prod" value="0"></td></tr>
+  <tr><td class="label">Achats consommés (matières / marchandises)</td><td><input type="number" id="achats" value="30000"></td></tr>
+  <tr><td class="label">Autres charges externes</td><td><input type="number" id="externes" value="15000"></td></tr>
+  <tr><td class="label">Impôts, taxes et versements assimilés</td><td><input type="number" id="impots" value="3000"></td></tr>
+  <tr><td class="label">Charges de personnel</td><td><input type="number" id="personnel" value="25000"></td></tr>
+  <tr><td class="label">Dotations aux amortissements</td><td><input type="number" id="dotations" value="5000"></td></tr>
+  <tr><td class="label">Charges financières</td><td><input type="number" id="financieres" value="1000"></td></tr>
+  <tr><td class="label">Produits financiers</td><td><input type="number" id="prod_fin" value="500"></td></tr>
+  <tr><td class="label">Charges exceptionnelles</td><td><input type="number" id="excep_charges" value="300"></td></tr>
+  <tr><td class="label">Produits exceptionnels</td><td><input type="number" id="excep_prod" value="200"></td></tr>
+  <tr><td class="label">Participation des salariés</td><td><input type="number" id="participation" value="1000"></td></tr>
+  <tr><td class="label">Impôt sur les bénéfices</td><td><input type="number" id="impot_soc" value="2000"></td></tr>
+</tbody>
     </table>
 
     <button onclick="calculSIG()">Calculer les SIG</button>
@@ -200,3 +216,4 @@
   </script>
 </body>
 </html>
+
